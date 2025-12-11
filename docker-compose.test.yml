@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      - PYTHONPATH=/app/src
+      - AGENT_NAME=TestAgent
+      - AGENT_DESCRIPTION=Test Agent
+      - LLM_MODEL=test-model
+      - LLM_API_BASE=https://test-api.example.com
+      - LLM_API_KEY=test-key
+      - MCP_URL=http://test-mcp:8000/sse
+      - ENABLE_PHOENIX=false
+    volumes:
+      - ./tests:/app/tests
+      - ./src:/app/src
+    command: >
+      sh -c "pip install -r requirements-dev.txt &&
+             pytest tests/ -v --cov=src --cov-report=xml --cov-report=html"

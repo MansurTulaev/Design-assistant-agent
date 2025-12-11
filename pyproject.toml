@@ -1,0 +1,21 @@
+[project]
+name = "adk-agent"
+version = "1.0.0"
+description = "Agent for generating React components from Figma designs"
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "google-adk>=1.13.0,<2.0.0",
+    "a2a-sdk>=0.3.4,<0.4.0",
+    "litellm>=1.76.3,<2.0.0",
+    "openinference-instrumentation-google-adk>=0.1.4,<0.2.0",
+    "arize-phoenix-otel>=0.13.0,<0.14.0",
+    "python-dotenv>=1.0.0"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
