@@ -1,0 +1,10 @@
+fastmcp
+httpx
+python-dotenv
+beautifulsoup4
+markdown
+qdrant-client
+sentence-transformers
+torch
+langchain-mcp-adapters
+redis>=5.0.0

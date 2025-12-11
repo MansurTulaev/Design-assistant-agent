@@ -1,0 +1,457 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "DesignComponent": {
+      "type": "object",
+      "title": "Design Component",
+      "description": "Схема для компонента из Storybook/дизайн-системы",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Уникальный идентификатор компонента"
+        },
+        "name": {
+          "type": "string",
+          "description": "Название компонента"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["atoms", "molecules", "organisms", "templates", "pages"],
+          "description": "Категория компонента по методологии Atomic Design"
+        },
+        "description": {
+          "type": "string",
+          "description": "Описание компонента и его назначения"
+        },
+        "props": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ComponentProp"
+          },
+          "description": "Список пропсов компонента"
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "props": {"type": "object"},
+              "description": {"type": "string"}
+            }
+          },
+          "description": "Варианты отображения компонента"
+        },
+        "examples": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Примеры использования компонента"
+        },
+        "storybookUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL компонента в Storybook"
+        },
+        "tags": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Теги для поиска и категоризации"
+        }
+      },
+      "required": ["id", "name", "category"]
+    },
+    "ComponentProp": {
+      "type": "object",
+      "title": "Component Property",
+      "description": "Схема для пропса компонента",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Название пропса"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "number", "boolean", "object", "array", "function", "node", "element"],
+          "description": "Тип пропса"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Обязательность пропса"
+        },
+        "default": {
+          "description": "Значение по умолчанию"
+        },
+        "description": {
+          "type": "string",
+          "description": "Описание пропса"
+        },
+        "options": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Доступные значения для enum-типов"
+        }
+      },
+      "required": ["name", "type"]
+    },
+    "BrandGuideline": {
+      "type": "object",
+      "title": "Brand Guideline",
+      "description": "Схема для правил брендбука",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Уникальный идентификатор правила"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["logo", "colors", "typography", "spacing", "imagery", "voice", "tone", "usage"],
+          "description": "Категория правила бренда"
+        },
+        "title": {
+          "type": "string",
+          "description": "Название правила"
+        },
+        "description": {
+          "type": "string",
+          "description": "Подробное описание правила"
+        },
+        "rules": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Список правил и ограничений"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {"type": "string", "enum": ["correct", "incorrect"]},
+              "description": {"type": "string"},
+              "image": {"type": "string", "format": "uri"}
+            }
+          },
+          "description": "Примеры правильного и неправильного использования"
+        },
+        "relatedComponents": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Связанные компоненты дизайн-системы"
+        }
+      },
+      "required": ["id", "category", "title"]
+    },
+    "DesignToken": {
+      "type": "object",
+      "title": "Design Token",
+      "description": "Схема для дизайн-токена (цвет, типографика, отступы и т.д.)",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Уникальный идентификатор токена"
+        },
+        "name": {
+          "type": "string",
+          "description": "Название токена"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["color", "typography", "spacing", "borderRadius", "shadow", "animation", "breakpoint"],
+          "description": "Тип дизайн-токена"
+        },
+        "value": {
+          "description": "Значение токена (может быть строка, число, объект)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Описание назначения токена"
+        },
+        "category": {
+          "type": "string",
+          "description": "Категория токена (например, 'primary', 'secondary', 'semantic')"
+        },
+        "usage": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Примеры использования токена"
+        },
+        "cssVariable": {
+          "type": "string",
+          "description": "CSS переменная для токена"
+        }
+      },
+      "required": ["id", "name", "type", "value"]
+    },
+    "ColorToken": {
+      "type": "object",
+      "title": "Color Token",
+      "description": "Специализированная схема для цветового токена",
+      "allOf": [
+        {"$ref": "#/definitions/DesignToken"},
+        {
+          "properties": {
+            "type": {"const": "color"},
+            "hex": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "description": "HEX значение цвета"
+            },
+            "rgb": {
+              "type": "object",
+              "properties": {
+                "r": {"type": "number", "minimum": 0, "maximum": 255},
+                "g": {"type": "number", "minimum": 0, "maximum": 255},
+                "b": {"type": "number", "minimum": 0, "maximum": 255}
+              }
+            },
+            "hsl": {
+              "type": "object",
+              "properties": {
+                "h": {"type": "number", "minimum": 0, "maximum": 360},
+                "s": {"type": "number", "minimum": 0, "maximum": 100},
+                "l": {"type": "number", "minimum": 0, "maximum": 100}
+              }
+            },
+            "contrast": {
+              "type": "object",
+              "properties": {
+                "onLight": {"type": "number"},
+                "onDark": {"type": "number"}
+              },
+              "description": "Контрастность цвета на светлом и темном фоне"
+            }
+          }
+        }
+      ]
+    },
+    "TypographyToken": {
+      "type": "object",
+      "title": "Typography Token",
+      "description": "Специализированная схема для типографического токена",
+      "allOf": [
+        {"$ref": "#/definitions/DesignToken"},
+        {
+          "properties": {
+            "type": {"const": "typography"},
+            "fontFamily": {"type": "string"},
+            "fontSize": {"type": "string"},
+            "fontWeight": {
+              "type": "string",
+              "enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900", "normal", "bold"]
+            },
+            "lineHeight": {"type": "string"},
+            "letterSpacing": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "UIPattern": {
+      "type": "object",
+      "title": "UI Pattern",
+      "description": "Схема для UI паттерна или паттерна взаимодействия",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Уникальный идентификатор паттерна"
+        },
+        "name": {
+          "type": "string",
+          "description": "Название паттерна"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["navigation", "forms", "feedback", "data-display", "layout", "overlay"],
+          "description": "Категория паттерна"
+        },
+        "description": {
+          "type": "string",
+          "description": "Описание паттерна и его назначения"
+        },
+        "useCases": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Сценарии использования паттерна"
+        },
+        "components": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Компоненты, используемые в паттерне"
+        },
+        "accessibility": {
+          "type": "object",
+          "properties": {
+            "ariaLabels": {"type": "array", "items": {"type": "string"}},
+            "keyboardNavigation": {"type": "boolean"},
+            "screenReaderSupport": {"type": "boolean"}
+          },
+          "description": "Требования доступности"
+        },
+        "examples": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Примеры реализации паттерна"
+        }
+      },
+      "required": ["id", "name", "category"]
+    },
+    "RAGQuery": {
+      "type": "object",
+      "title": "RAG Query",
+      "description": "Схема для RAG-запроса к дизайн-системе",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Текстовый запрос пользователя"
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "componentType": {
+              "type": "string",
+              "enum": ["component", "token", "pattern", "guideline", "all"]
+            },
+            "category": {"type": "string"},
+            "tags": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          },
+          "description": "Контекст для уточнения поиска"
+        },
+        "limit": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Максимальное количество результатов"
+        },
+        "includeMetadata": {
+          "type": "boolean",
+          "default": true,
+          "description": "Включать ли метаданные в ответ"
+        }
+      },
+      "required": ["query"]
+    },
+    "RAGResponse": {
+      "type": "object",
+      "title": "RAG Response",
+      "description": "Схема для ответа RAG-системы",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string"},
+              "type": {
+                "type": "string",
+                "enum": ["component", "token", "pattern", "guideline"]
+              },
+              "score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Релевантность результата"
+              },
+              "content": {"type": "object"},
+              "snippet": {"type": "string"},
+              "metadata": {
+                "type": "object",
+                "properties": {
+                  "source": {"type": "string"},
+                  "lastUpdated": {"type": "string", "format": "date-time"},
+                  "tags": {"type": "array", "items": {"type": "string"}}
+                }
+              }
+            }
+          }
+        },
+        "total": {
+          "type": "number",
+          "description": "Общее количество найденных результатов"
+        },
+        "query": {"type": "string"},
+        "processingTime": {
+          "type": "number",
+          "description": "Время обработки запроса в миллисекундах"
+        }
+      },
+      "required": ["results", "total", "query"]
+    },
+    "DesignSystem": {
+      "type": "object",
+      "title": "Design System",
+      "description": "Схема для описания всей дизайн-системы",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Название дизайн-системы"
+        },
+        "version": {
+          "type": "string",
+          "description": "Версия дизайн-системы"
+        },
+        "components": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/DesignComponent"},
+          "description": "Список всех компонентов"
+        },
+        "tokens": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/DesignToken"},
+          "description": "Список всех дизайн-токенов"
+        },
+        "patterns": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/UIPattern"},
+          "description": "Список всех UI паттернов"
+        },
+        "guidelines": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/BrandGuideline"},
+          "description": "Список всех правил брендбука"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "lastUpdated": {"type": "string", "format": "date-time"},
+            "maintainer": {"type": "string"},
+            "repository": {"type": "string", "format": "uri"},
+            "documentation": {"type": "string", "format": "uri"}
+          }
+        }
+      },
+      "required": ["name", "version"]
+    }
+  },
+  "schemas": {
+    "component": {
+      "$ref": "#/definitions/DesignComponent"
+    },
+    "brandGuideline": {
+      "$ref": "#/definitions/BrandGuideline"
+    },
+    "designToken": {
+      "$ref": "#/definitions/DesignToken"
+    },
+    "colorToken": {
+      "$ref": "#/definitions/ColorToken"
+    },
+    "typographyToken": {
+      "$ref": "#/definitions/TypographyToken"
+    },
+    "uiPattern": {
+      "$ref": "#/definitions/UIPattern"
+    },
+    "ragQuery": {
+      "$ref": "#/definitions/RAGQuery"
+    },
+    "ragResponse": {
+      "$ref": "#/definitions/RAGResponse"
+    },
+    "designSystem": {
+      "$ref": "#/definitions/DesignSystem"
+    }
+  }
+}
+
